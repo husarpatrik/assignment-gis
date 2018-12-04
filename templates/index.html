@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pumpicky</title>
+    <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+</head>
+<body>
+
+<div class="">
+  <div class="row">
+    <div class="col-2">
+      <div id="search_area" class="container">
+          <label>Hladaj ulicu<br> <input id="search_bar_ulica" type="text"/><button class="btn" onclick="getPumpyUlica()">Hladaj</button></label>
+          <label>Hladaj mesto<br> <input id="search_bar_mesto" type="text"/><button class="btn" onclick="getPumpyMesto()">Hladaj</button></label>
+      </div>
+    </div>
+    <div class="col-10">
+      <div id="map" style="width:100%; height: 600px;" ></div>
+    </div>
+  </div>
+</div>
+
+<script>
+    L.mapbox.accessToken = 'pk.eyJ1IjoicGFwYTI0MiIsImEiOiJjanA0MTVyZWEwY3B0M3FwanFhamU5eTJjIn0.i7Wt8vowZdKD70GhgcTVMw';
+    let map = L.mapbox.map('map', 'mapbox.streets').setView([48.739,19.536], 8);
+    var lejer = L.layerGroup().addTo(map);
+
+    function getPumpyMesto() {
+        zmaz();
+        var nazov = $('#search_bar_mesto').val();
+        $.get('/mesto/' + nazov, function (data) {
+            var lat;
+            var lng;
+            console.log(data);
+            data.forEach(function (pumpa) {
+                layer = L.geoJson().addTo(lejer);
+                layer.addData(JSON.parse(pumpa[1]));
+
+                lat = JSON.parse(pumpa[1]).coordinates[1];
+                lng = JSON.parse(pumpa[1]).coordinates[0];
+            })
+            layer.addData(JSON.parse(data[0][2]));
+            console.log(lat);
+            console.log(lng);
+            map.flyTo([lat, lng], 11);
+
+        })
+    }
+
+        function getPumpyUlica(){
+        zmaz();
+        var nazov = $('#search_bar_ulica').val();
+        $.get('/pumpy/'+nazov, function(data){
+            console.log(data);
+            var lat;
+            var lng;
+            data.forEach(function (pumpa) {
+                layer = L.geoJson().addTo(lejer);
+                layer.addData(JSON.parse(pumpa[2]));
+                console.log(JSON.parse(pumpa[2]));
+                lat = JSON.parse(pumpa[2]).coordinates[1];
+                lng = JSON.parse(pumpa[2]).coordinates[0];
+                        })
+            console.log(lat);
+            console.log(lng);
+            map.flyTo([lat,lng],12);
+        })
+    }
+
+    function klik(e){
+        zmaz();
+        $.get('/pumpy',{lat: e.latlng.lat, lng: e.latlng.lng}, function(data){
+            var lat;
+            var lng;
+            data.forEach(function (pumpa) {
+                layer = L.geoJson().addTo(lejer);
+                layer.addData(JSON.parse(pumpa[2]));
+                lat = JSON.parse(pumpa[2]).coordinates[1];
+                lng = JSON.parse(pumpa[2]).coordinates[0];
+                        })
+            console.log(lat);
+            console.log(lng);
+            map.flyTo([lat,lng],12);
+        })
+
+    }
+    map.on('click',klik);
+
+    function zmaz(){
+        lejer.eachLayer(function (layer){
+            lejer.removeLayer(layer);
+
+        }
+        )
+    }
+
+</script>
+
+
+
+
+</body>
+</html>
