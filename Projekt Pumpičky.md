@@ -11,6 +11,12 @@ Kritéria je možné zadávať:
  - Zobrazenie čerpacích staníc v okolí konkrétnej cesty. Po zadaní názvu cesty a kliknutiu na tlačidlo Hľadať sa na mape zobrazia čerpacie stanice v okolí zadanej cesty v rozsahu do 1km. Následne sa mapa nazoomuje na zobrazené čerpacie stanice.
  - Zobrazenie čerpacích staníc v oblasti mesta. Po zadaní názvu mesta a kliknutiu na tlačidlo Hľadať sa na mape zobrazia črpacie stanice v oblasti zadaného mesta. Následne sa mapa nazoomuje na vyznačenú oblasť.
 
+## Frontend
+Aplikácia využíva statickú stránku HTML index.html. Používa MapBox widget na zobrazenie mapy a JQuery na komunikáciu cez REST API.
+
+## Backend
+Backend je napísaný vo Flask frameworku a používa dáta z PostGIS databázy.
+
 ## Príklad použitých query
 Čerpacie stanice pri zadanom bode
 ```
@@ -42,6 +48,4 @@ create index indexik4 on planet_osm_polygon (upper(name));
 create index indexik5 on planet_osm_point (amenity);
 ```
 
-[alt text][logo]
-
-[logo]: screen.png "Pumpičky"
+![Screenshot](screen.png)
